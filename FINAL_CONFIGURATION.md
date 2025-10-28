@@ -349,7 +349,7 @@ Firebase UID: ekdISmrCcMQyF1lDEvrOdX4hSnp2
 ### Cómo Probar
 
 **En Web:**
-1. Ir a: https://joltcab-mobile.preview.emergentagent.com
+1. Ir a: https://rideshare-app-173.preview.emergentagent.com
 2. Registrar nuevo usuario o usar el de prueba
 3. Navegar por la app
 
@@ -410,7 +410,7 @@ npm run android
 
 **Proyecto:** JoltCab Mobile Apps
 **URL:** https://joltcab.com
-**Preview:** https://joltcab-mobile.preview.emergentagent.com
+**Preview:** https://rideshare-app-173.preview.emergentagent.com
 
 ---
 
