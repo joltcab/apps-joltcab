@@ -69,28 +69,53 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (email: string, password: string, full_name: string, phone: string) => {
+  register: async (firstName: string, lastName: string, email: string, phone: string, password: string, countryCode: string = '+1', country: string = 'United States') => {
     set({ loading: true });
     try {
-      console.log('📝 Attempting registration...');
-      const response = await api.post('/api/auth/register', {
+      console.log('📝 Attempting registration with joltcab.com...');
+      
+      const registerData = {
+        first_name: firstName,
+        last_name: lastName,
         email,
-        password,
-        full_name,
         phone,
-        role: 'user'
-      });
-      const { access_token, user } = response.data;
+        country_phone_code: countryCode,
+        country,
+        password,
+        login_by: 'manual',
+        device_type: 'web'
+      };
       
-      console.log('✅ Registration successful:', user.email);
-      await AsyncStorage.setItem('token', access_token);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      const response = await api.post('/userregister', registerData);
       
-      set({ user, token: access_token, isAuthenticated: true, loading: false });
+      if (response.data.success) {
+        const { token, user_id, first_name, last_name, email, phone, wallet, picture } = response.data;
+        
+        const user: User = {
+          user_id,
+          first_name,
+          last_name,
+          email,
+          phone: phone || '',
+          wallet: wallet || 0,
+          picture,
+          token,
+          country_phone_code: countryCode,
+          country
+        };
+        
+        console.log('✅ Registration successful:', user.email);
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        
+        set({ user, token, isAuthenticated: true, loading: false });
+      } else {
+        throw new Error('Registration failed');
+      }
     } catch (error: any) {
-      console.error('❌ Registration failed:', error.response?.data?.detail || error.message);
+      console.error('❌ Registration failed:', error.response?.data?.message || error.message);
       set({ loading: false });
-      throw new Error(error.response?.data?.detail || 'Registration failed');
+      throw new Error(error.response?.data?.message || 'Registration failed');
     }
   },
 
