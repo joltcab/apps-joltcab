@@ -121,6 +121,61 @@ export default function BookRideScreen() {
     }
   };
 
+  const handleUseCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Please enable location permissions');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const current = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        address: `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}`,
+      };
+      setPickupLocation(current);
+      setPickupAddress(current.address);
+    } catch (error) {
+      Alert.alert('Error', 'Could not get current location');
+    }
+  };
+
+  const handleSetPickupFromInput = () => {
+    if (!pickupAddress.trim()) {
+      Alert.alert('Error', 'Please enter a pickup address');
+      return;
+    }
+    
+    // For demo, create a location based on input
+    // In production, you'd use Google Places API to geocode
+    const location = {
+      latitude: 37.78825 + (Math.random() - 0.5) * 0.1,
+      longitude: -122.4324 + (Math.random() - 0.5) * 0.1,
+      address: pickupAddress,
+    };
+    setPickupLocation(location);
+  };
+
+  const handleSetDropoffFromInput = () => {
+    if (!dropoffAddress.trim()) {
+      Alert.alert('Error', 'Please enter a dropoff address');
+      return;
+    }
+    
+    const location = {
+      latitude: 37.78825 + (Math.random() - 0.5) * 0.1,
+      longitude: -122.4324 + (Math.random() - 0.5) * 0.1,
+      address: dropoffAddress,
+    };
+    setDropoffLocation(location);
+    
+    if (pickupLocation) {
+      calculateFare(pickupLocation, location);
+    }
+  };
+
   const handleBookRide = async () => {
     if (!pickupLocation) {
       Alert.alert('Error', 'Please select a pickup location');
