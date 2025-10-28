@@ -36,15 +36,17 @@ export const PriceNegotiationModal: React.FC<PriceNegotiationModalProps> = ({
       transparent
       animationType="slide"
       onRequestClose={onCancel}
+      accessible={true}
+      accessibilityViewIsModal={true}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
+      <View style={styles.overlay} accessible={false}>
+        <View style={styles.modal} accessible={true}>
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>💰 Negocia tu Precio</Text>
               <Text style={styles.subtitle}>Los conductores verán tu oferta</Text>
             </View>
-            <TouchableOpacity onPress={onCancel}>
+            <TouchableOpacity onPress={onCancel} accessibilityLabel="Cerrar modal">
               <Ionicons name="close" size={24} color={COLORS.text} />
             </TouchableOpacity>
           </View>
