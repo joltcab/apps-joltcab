@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "35513520310",
+    "firebase_url": "https://joltcab-9cdde-default-rtdb.firebaseio.com",
+    "project_id": "joltcab-9cdde",
+    "storage_bucket": "joltcab-9cdde.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35513520310:android:0015889cc3da0f3e019617",
+        "android_client_info": {
+          "package_name": "com.joltcab.clients"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35513520310-p3pkfhm8av9fa372ag2a5m9f1b4k3d6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL8niceH8TH3jfMrV89UXat5NQeUuZQC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107986981116468822213",
+              "client_type": 3
+            },
+            {
+              "client_id": "35513520310-6svqofjpl1e3s6qdq622e7jds07jttce.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joltcab.clients"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35513520310:android:1ea206d0bafd0646019617",
+        "android_client_info": {
+          "package_name": "com.joltcab.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35513520310-p3pkfhm8av9fa372ag2a5m9f1b4k3d6b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL8niceH8TH3jfMrV89UXat5NQeUuZQC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107986981116468822213",
+              "client_type": 3
+            },
+            {
+              "client_id": "35513520310-6svqofjpl1e3s6qdq622e7jds07jttce.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joltcab.clients"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
