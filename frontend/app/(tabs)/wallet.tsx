@@ -83,31 +83,44 @@ export default function WalletScreen() {
     }
   };
 
-  const renderTransaction = ({ item }: { item: WalletTransaction }) => (
-    <View style={styles.transactionCard}>
-      <View style={styles.transactionIcon}>
-        <Ionicons
-          name={item.type === 'credit' ? 'arrow-down' : 'arrow-up'}
-          size={24}
-          color={item.type === 'credit' ? COLORS.success : COLORS.error}
-        />
-      </View>
-      <View style={styles.transactionDetails}>
-        <Text style={styles.transactionDescription}>{item.description}</Text>
-        <Text style={styles.transactionDate}>
-          {format(new Date(item.created_at), 'MMM dd, yyyy hh:mm a')}
+  const renderTransaction = ({ item }: { item: WalletTransaction }) => {
+    const formatDate = (dateString: string) => {
+      if (!dateString) return 'N/A';
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'N/A';
+        return format(date, 'MMM dd, yyyy hh:mm a');
+      } catch {
+        return 'N/A';
+      }
+    };
+
+    return (
+      <View style={styles.transactionCard}>
+        <View style={styles.transactionIcon}>
+          <Ionicons
+            name={item.type === 'credit' ? 'arrow-down' : 'arrow-up'}
+            size={24}
+            color={item.type === 'credit' ? COLORS.success : COLORS.error}
+          />
+        </View>
+        <View style={styles.transactionDetails}>
+          <Text style={styles.transactionDescription}>{item.description}</Text>
+          <Text style={styles.transactionDate}>
+            {formatDate(item.created_at)}
+          </Text>
+        </View>
+        <Text
+          style={[
+            styles.transactionAmount,
+            { color: item.type === 'credit' ? COLORS.success : COLORS.error },
+          ]}
+        >
+          {item.type === 'credit' ? '+' : '-'}${item.amount.toFixed(2)}
         </Text>
       </View>
-      <Text
-        style={[
-          styles.transactionAmount,
-          { color: item.type === 'credit' ? COLORS.success : COLORS.error },
-        ]}
-      >
-        {item.type === 'credit' ? '+' : '-'}${item.amount.toFixed(2)}
-      </Text>
-    </View>
-  );
+    );
+  };
 
   if (loading && transactions.length === 0) {
     return <LoadingSpinner />;
