@@ -1,22 +1,45 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "JoltCab",
+    "slug": "joltcab-client",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "scheme": "joltcab",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joltcab.clients",
+      "config": {
+        "googleMapsApiKey": "AIzaSyBUcfd1xbONq2LMKAAprsoRlBGPJQ2wkaM"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "JoltCab needs your location to show nearby rides and track your trips",
+        "NSLocationAlwaysUsageDescription": "JoltCab needs your location to track your trips in the background",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "JoltCab needs your location to track your trips"
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000"
+        "backgroundColor": "#00bf63"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.joltcab.clients",
+      "edgeToEdgeEnabled": true,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDL8niceH8TH3jfMrV89UXat5NQeUuZQC4"
+        }
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -31,12 +54,22 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#000"
+          "backgroundColor": "#00bf63"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow JoltCab to use your location.",
+          "locationWhenInUsePermission": "Allow JoltCab to use your location."
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "backendUrl": "https://joltcab-mobile.preview.emergentagent.com"
     }
   }
 }
