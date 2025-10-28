@@ -44,17 +44,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const { token, user_id, first_name, last_name, email, phone, wallet, picture } = response.data;
         
         const user: User = {
+          uid: user_id, // Add uid for compatibility
           user_id,
           first_name,
           last_name,
           email,
           phone,
-          wallet,
+          wallet: wallet || 0,
           picture,
           token
         };
         
-        console.log('✅ Login successful:', user.email);
+        console.log('✅ Login successful:', user.email, 'User ID:', user.user_id);
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('user', JSON.stringify(user));
         
