@@ -59,27 +59,49 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
     setLoading(true);
     try {
       console.log('🔍 Searching places:', text);
-      const response = await api.post('/maps/autocomplete', {
-        input: text,
-        language: 'es',
-      });
+      
+      // Try backend first
+      try {
+        const response = await api.post('/maps/autocomplete', {
+          input: text,
+          language: 'es',
+        });
 
-      console.log('📡 Backend response:', response.data);
+        console.log('📡 Backend response:', response.data);
 
-      if (response.data.status === 'REQUEST_DENIED') {
-        console.error('❌ Google Maps API key not configured in backend');
-        Alert.alert(
-          'Error de Configuración',
-          'El backend necesita configurar la API key de Google Maps con Places API habilitado.'
+        if (response.data.status === 'REQUEST_DENIED') {
+          console.error('❌ Google Maps API key not configured in backend');
+          throw new Error('Backend API key issue');
+        } else if (response.data.success && response.data.predictions) {
+          console.log('✅ Found', response.data.predictions.length, 'predictions from backend');
+          setPredictions(response.data.predictions);
+          setShowPredictions(true);
+          setLoading(false);
+          return;
+        }
+      } catch (backendError) {
+        console.log('⚠️ Backend unavailable, trying direct Google Maps API...');
+        
+        // Fallback to direct Google Maps API
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyBUcfd1xbONq2LMKAAprsoRlBGPJQ2wkaM';
+        const googleResponse = await fetch(
+          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&key=${GOOGLE_MAPS_API_KEY}&language=es`,
+          {
+            method: 'GET',
+          }
         );
-        setPredictions([]);
-      } else if (response.data.success && response.data.predictions) {
-        console.log('✅ Found', response.data.predictions.length, 'predictions');
-        setPredictions(response.data.predictions);
-        setShowPredictions(true);
-      } else {
-        console.log('⚠️ No predictions found');
-        setPredictions([]);
+        
+        const data = await googleResponse.json();
+        console.log('📡 Direct Google Maps response:', data);
+        
+        if (data.status === 'OK' && data.predictions) {
+          console.log('✅ Found', data.predictions.length, 'predictions from Google Maps');
+          setPredictions(data.predictions);
+          setShowPredictions(true);
+        } else {
+          console.log('⚠️ No predictions found');
+          setPredictions([]);
+        }
       }
     } catch (error: any) {
       console.error('❌ Autocomplete error:', error);
