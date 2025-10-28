@@ -1,63 +1,53 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import React from 'react';
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
-  onTyping?: () => void;
+  value: string;
+  onChangeText: (text: string) => void;
+  onSend: () => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
+  value,
+  onChangeText,
   onSend,
-  onTyping,
   placeholder = 'Escribe un mensaje...',
+  disabled = false,
 }) => {
-  const [message, setMessage] = useState('');
-
   const handleSend = () => {
-    if (message.trim()) {
-      onSend(message.trim());
-      setMessage('');
-    }
-  };
-
-  const handleChangeText = (text: string) => {
-    setMessage(text);
-    if (onTyping && text.length > 0) {
-      onTyping();
+    if (value.trim() && !disabled) {
+      onSend();
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={message}
-          onChangeText={handleChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={COLORS.textLight}
-          multiline
-          maxLength={500}
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={COLORS.textLight}
+        multiline
+        maxLength={500}
+        editable={!disabled}
+      />
+      <TouchableOpacity
+        style={[styles.sendButton, (!value.trim() || disabled) && styles.sendButtonDisabled]}
+        onPress={handleSend}
+        disabled={!value.trim() || disabled}
+      >
+        <Ionicons
+          name="send"
+          size={24}
+          color={value.trim() && !disabled ? COLORS.white : COLORS.textLight}
         />
-        <TouchableOpacity
-          style={[styles.sendButton, !message.trim() && styles.sendButtonDisabled]}
-          onPress={handleSend}
-          disabled={!message.trim()}
-        >
-          <Ionicons
-            name="send"
-            size={24}
-            color={message.trim() ? COLORS.white : COLORS.textLight}
-          />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </TouchableOpacity>
+    </View>
   );
 };
 
