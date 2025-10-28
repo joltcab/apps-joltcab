@@ -5,7 +5,6 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  TextInput,
   Alert,
   ScrollView,
   KeyboardAvoidingView,
@@ -20,6 +19,8 @@ import { useNegotiationStore } from '../src/store/negotiationStore';
 import { useAuthStore } from '../src/store/authStore';
 import { Button } from '../src/components/Button';
 import { WhatsAppButton } from '../src/components/WhatsAppButton';
+import { AddressAutocomplete } from '../src/components/AddressAutocomplete';
+import api from '../src/services/api';
 
 // Conditional import for MapView (only on native)
 let MapView: any;
