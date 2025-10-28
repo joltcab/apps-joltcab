@@ -16,8 +16,14 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   senderName 
 }) => {
   const formatTime = (isoString: string) => {
+    if (!isoString) return '';
+    
     try {
       const date = new Date(isoString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return '';
+      }
       return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
     } catch {
       return '';
@@ -34,9 +40,11 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           {message}
         </Text>
       </View>
-      <Text style={styles.timestamp}>
-        {formatTime(timestamp)}
-      </Text>
+      {timestamp && (
+        <Text style={styles.timestamp}>
+          {formatTime(timestamp)}
+        </Text>
+      )}
     </View>
   );
 };
