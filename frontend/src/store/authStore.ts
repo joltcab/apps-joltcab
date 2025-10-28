@@ -21,11 +21,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: false,
   isAuthenticated: false,
 
-  login: async (email: string, password: string) => {
+  login: async (emailOrPhone: string, password: string) => {
     set({ loading: true });
     try {
       console.log('🔐 Attempting login...');
-      const response = await api.post('/api/auth/login', { email, password });
+      
+      // Detectar si es email o teléfono
+      const isEmail = emailOrPhone.includes('@');
+      const loginData = isEmail 
+        ? { email: emailOrPhone, password }
+        : { phone: emailOrPhone, password };
+      
+      console.log('📧 Login type:', isEmail ? 'Email' : 'Phone');
+      
+      const response = await api.post('/api/auth/login', loginData);
       const { access_token, user } = response.data;
       
       console.log('✅ Login successful:', user.email);
