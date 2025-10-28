@@ -38,12 +38,14 @@ export const ShareOptionsModal: React.FC<ShareOptionsModalProps> = ({
       transparent
       animationType="slide"
       onRequestClose={onClose}
+      accessible={true}
+      accessibilityViewIsModal={true}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
+      <View style={styles.overlay} accessible={false}>
+        <View style={styles.modal} accessible={true}>
           <View style={styles.header}>
             <Text style={styles.title}>Compartir Viaje</Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity onPress={onClose} accessibilityLabel="Cerrar modal">
               <Ionicons name="close" size={24} color={COLORS.text} />
             </TouchableOpacity>
           </View>
