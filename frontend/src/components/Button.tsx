@@ -1,5 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 
 interface ButtonProps {
@@ -9,6 +10,7 @@ interface ButtonProps {
   loading?: boolean;
   disabled?: boolean;
   style?: ViewStyle;
+  icon?: keyof typeof Ionicons.glyphMap;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,6 +20,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   disabled = false,
   style,
+  icon,
 }) => {
   const buttonStyles = [
     styles.button,
@@ -37,6 +40,8 @@ export const Button: React.FC<ButtonProps> = ({
     variant === 'danger' && styles.dangerText,
   ];
 
+  const iconColor = variant === 'outline' ? COLORS.primary : COLORS.white;
+
   return (
     <TouchableOpacity
       style={buttonStyles}
@@ -47,7 +52,10 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator color={variant === 'outline' ? COLORS.primary : COLORS.white} />
       ) : (
-        <Text style={textStyles}>{title}</Text>
+        <View style={styles.content}>
+          {icon && <Ionicons name={icon} size={20} color={iconColor} style={styles.icon} />}
+          <Text style={textStyles}>{title}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
