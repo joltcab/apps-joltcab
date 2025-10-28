@@ -33,6 +33,7 @@ if (Platform.OS !== 'web') {
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
+  const { stats, fetchStats } = useStatsStore();
   const router = useRouter();
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [region, setRegion] = useState({
@@ -44,7 +45,10 @@ export default function HomeScreen() {
 
   useEffect(() => {
     getLocation();
-  }, []);
+    if (user?.user_id) {
+      fetchStats(user.user_id);
+    }
+  }, [user]);
 
   const getLocation = async () => {
     try {
