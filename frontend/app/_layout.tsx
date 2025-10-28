@@ -14,6 +14,11 @@ export default function RootLayout() {
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="book-ride" />
+      <Stack.Screen name="chat" />
+      <Stack.Screen name="share-trip" />
+      <Stack.Screen name="navigation" />
+      <Stack.Screen name="sos" />
     </Stack>
   );
 }
