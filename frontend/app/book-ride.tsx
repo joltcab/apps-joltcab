@@ -75,23 +75,50 @@ export default function BookRideScreen() {
     }
   };
 
-  const calculateFare = (pickup: any, dropoff: any) => {
-    // Simple fare calculation based on distance
-    const R = 6371; // Earth's radius in km
-    const lat1 = (pickup.latitude * Math.PI) / 180;
-    const lat2 = (dropoff.latitude * Math.PI) / 180;
-    const dLat = ((dropoff.latitude - pickup.latitude) * Math.PI) / 180;
-    const dLon = ((dropoff.longitude - pickup.longitude) * Math.PI) / 180;
+  const calculateFare = async (pickup: any, dropoff: any) => {
+    try {
+      console.log('📊 Calculating distance and fare...');
+      const response = await api.post('/maps/distance-matrix', {
+        origins: [`${pickup.latitude},${pickup.longitude}`],
+        destinations: [`${dropoff.latitude},${dropoff.longitude}`],
+        units: 'metric',
+      });
 
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
+      if (response.data.success && response.data.rows?.[0]?.elements?.[0]) {
+        const element = response.data.rows[0].elements[0];
+        
+        if (element.status === 'OK') {
+          const distanceInKm = element.distance.value / 1000; // meters to km
+          const durationInMin = element.duration.value / 60; // seconds to min
+          
+          // Base fare $5 + $2.5 per km
+          const fare = 5 + distanceInKm * 2.5;
+          
+          console.log('✅ Distance:', distanceInKm.toFixed(2), 'km');
+          console.log('✅ Duration:', Math.round(durationInMin), 'min');
+          console.log('✅ Fare:', fare.toFixed(2), 'USD');
+          
+          setEstimatedFare(Math.round(fare * 100) / 100);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Distance calculation failed:', error);
+      // Fallback to simple calculation
+      const R = 6371; // Earth's radius in km
+      const lat1 = (pickup.latitude * Math.PI) / 180;
+      const lat2 = (dropoff.latitude * Math.PI) / 180;
+      const dLat = ((dropoff.latitude - pickup.latitude) * Math.PI) / 180;
+      const dLon = ((dropoff.longitude - pickup.longitude) * Math.PI) / 180;
 
-    // Base fare $5 + $2.5 per km
-    const fare = 5 + distance * 2.5;
-    setEstimatedFare(Math.round(fare * 100) / 100);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+
+      const fare = 5 + distance * 2.5;
+      setEstimatedFare(Math.round(fare * 100) / 100);
+    }
   };
 
   const handleLocationSelect = (locationType: LocationType, location: any) => {
