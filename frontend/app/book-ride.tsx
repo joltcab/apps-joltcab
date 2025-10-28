@@ -187,7 +187,20 @@ export default function BookRideScreen() {
     }
 
     try {
-      const trip = await createTrip(pickupLocation, dropoffLocation, selectedPaymentMethod);
+      const { user } = useAuthStore.getState();
+      if (!user) {
+        Alert.alert('Error', 'Please login first');
+        return;
+      }
+
+      const trip = await createTrip(
+        user.user_id,
+        `${user.first_name} ${user.last_name}`,
+        pickupLocation,
+        dropoffLocation,
+        selectedPaymentMethod
+      );
+      
       Alert.alert(
         'Ride Booked!',
         `Your ride has been booked. Fare: $${trip.fare.toFixed(2)}`,
