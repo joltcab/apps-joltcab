@@ -10,12 +10,23 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS } from '../../src/constants/colors';
 import { useAuthStore } from '../../src/store/authStore';
 import { Button } from '../../src/components/Button';
+
+// Conditional import for MapView (only on native)
+let MapView: any;
+let Marker: any;
+let PROVIDER_GOOGLE: any;
+
+if (Platform.OS !== 'web') {
+  const RNMaps = require('react-native-maps');
+  MapView = RNMaps.default;
+  Marker = RNMaps.Marker;
+  PROVIDER_GOOGLE = RNMaps.PROVIDER_GOOGLE;
+}
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
@@ -74,23 +85,32 @@ export default function HomeScreen() {
 
       {/* Map */}
       <View style={styles.mapContainer}>
-        <MapView
-          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-          style={styles.map}
-          region={region}
-          showsUserLocation
-          showsMyLocationButton
-        >
-          {location && (
-            <Marker
-              coordinate={{
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-              }}
-              title="You are here"
-            />
-          )}
-        </MapView>
+        {Platform.OS !== 'web' ? (
+          <MapView
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+            style={styles.map}
+            region={region}
+            showsUserLocation
+            showsMyLocationButton
+          >
+            {location && (
+              <Marker
+                coordinate={{
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                }}
+                title="You are here"
+              />
+            )}
+          </MapView>
+        ) : (
+          <View style={[styles.map, styles.mapPlaceholder]}>
+            <Ionicons name="map" size={64} color={COLORS.primary} />
+            <Text style={styles.mapPlaceholderText}>
+              Map available on mobile app
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Book Ride Button */}
