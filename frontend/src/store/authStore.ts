@@ -148,12 +148,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   updateProfile: async (data: Partial<User>) => {
     try {
       console.log('📝 Updating profile...');
-      const response = await api.put('/api/auth/profile', data);
-      console.log('✅ Profile updated');
-      set({ user: response.data });
+      // TODO: Implement profile update endpoint when available
+      const currentUser = get().user;
+      if (currentUser) {
+        const updatedUser = { ...currentUser, ...data };
+        await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+        set({ user: updatedUser });
+        console.log('✅ Profile updated locally');
+      }
     } catch (error: any) {
-      console.error('❌ Profile update failed:', error.response?.data?.detail || error.message);
-      throw new Error(error.response?.data?.detail || 'Update failed');
+      console.error('❌ Profile update failed:', error.message);
+      throw new Error('Update failed');
     }
   },
 }));
