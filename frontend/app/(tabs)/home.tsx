@@ -83,7 +83,9 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hello,</Text>
-          <Text style={styles.userName}>{user?.first_name || 'Guest'}</Text>
+          <Text style={styles.userName}>
+            {authLoading ? 'Loading...' : (user?.first_name || 'Guest')}
+          </Text>
         </View>
         <TouchableOpacity style={styles.notificationButton}>
           <Ionicons name="notifications" size={24} color={COLORS.text} />
