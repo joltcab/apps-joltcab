@@ -76,12 +76,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const token = await AsyncStorage.getItem('token');
       if (token) {
-        const response = await api.get('/auth/me');
+        console.log('🔄 Loading user profile...');
+        const response = await api.get('/api/auth/me');
+        console.log('✅ User profile loaded:', response.data.email);
         set({ user: response.data, token, isAuthenticated: true, loading: false });
       } else {
         set({ loading: false });
       }
     } catch (error) {
+      console.error('❌ Failed to load user profile');
       await get().logout();
       set({ loading: false });
     }
@@ -89,9 +92,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   updateProfile: async (data: Partial<User>) => {
     try {
-      const response = await api.put('/auth/profile', data);
+      console.log('📝 Updating profile...');
+      const response = await api.put('/api/auth/profile', data);
+      console.log('✅ Profile updated');
       set({ user: response.data });
     } catch (error: any) {
+      console.error('❌ Profile update failed:', error.response?.data?.detail || error.message);
       throw new Error(error.response?.data?.detail || 'Update failed');
     }
   },
