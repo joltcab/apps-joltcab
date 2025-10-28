@@ -446,6 +446,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.text,
   },
+  setButton: {
+    padding: 8,
+    marginLeft: 8,
+  },
+  quickActionsRow: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  quickActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 8,
+  },
+  quickActionBtnText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: COLORS.primary,
+    fontWeight: '600',
+  },
   bottomSheet: {
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 24,
