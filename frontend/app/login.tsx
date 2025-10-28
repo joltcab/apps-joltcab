@@ -16,7 +16,7 @@ import { COLORS } from '../src/constants/colors';
 import { useAuthStore } from '../src/store/authStore';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<any>({});
   const { login, loading } = useAuthStore();
@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
   const validate = () => {
     const newErrors: any = {};
-    if (!email) newErrors.email = 'Email is required';
+    if (!emailOrPhone) newErrors.emailOrPhone = 'Email or phone is required';
     if (!password) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -34,7 +34,7 @@ export default function LoginScreen() {
     if (!validate()) return;
 
     try {
-      await login(email, password);
+      await login(emailOrPhone, password);
       router.replace('/(tabs)/home');
     } catch (error: any) {
       Alert.alert('Error', error.message);
