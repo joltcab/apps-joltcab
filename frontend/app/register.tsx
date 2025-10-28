@@ -17,7 +17,8 @@ import { useAuthStore } from '../src/store/authStore';
 
 export default function RegisterScreen() {
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     password: '',
@@ -29,7 +30,8 @@ export default function RegisterScreen() {
 
   const validate = () => {
     const newErrors: any = {};
-    if (!formData.fullName) newErrors.fullName = 'Full name is required';
+    if (!formData.firstName) newErrors.firstName = 'First name is required';
+    if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.phone) newErrors.phone = 'Phone is required';
     if (!formData.password) newErrors.password = 'Password is required';
@@ -44,7 +46,15 @@ export default function RegisterScreen() {
     if (!validate()) return;
 
     try {
-      await register(formData.email, formData.password, formData.fullName, formData.phone);
+      await register(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.phone,
+        formData.password,
+        '+1',  // Default country code
+        'United States'  // Default country
+      );
       router.replace('/(tabs)/home');
     } catch (error: any) {
       Alert.alert('Error', error.message);
