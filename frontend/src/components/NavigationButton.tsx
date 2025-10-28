@@ -58,9 +58,11 @@ export const NavigationButton: React.FC<NavigationButtonProps> = ({
         transparent
         animationType="slide"
         onRequestClose={() => setShowModal(false)}
+        accessible={true}
+        accessibilityViewIsModal={true}
       >
-        <View style={styles.overlay}>
-          <View style={styles.modal}>
+        <View style={styles.overlay} accessible={false}>
+          <View style={styles.modal} accessible={true}>
             <View style={styles.header}>
               <Text style={styles.title}>Navegar a destino</Text>
               <TouchableOpacity onPress={() => setShowModal(false)}>
