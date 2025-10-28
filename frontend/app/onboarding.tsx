@@ -41,7 +41,9 @@ export default function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1 });
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
     } else {
       router.replace('/login');
     }
@@ -49,6 +51,12 @@ export default function OnboardingScreen() {
 
   const handleSkip = () => {
     router.replace('/login');
+  };
+
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / width);
+    setCurrentIndex(index);
   };
 
   const renderItem = ({ item }: { item: typeof slides[0] }) => (
