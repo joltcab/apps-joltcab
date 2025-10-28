@@ -6,10 +6,10 @@ interface Message {
   id: string;
   trip_id: string;
   sender_id: string;
-  sender_name: string;
+  sender_name?: string;
   sender_type: 'user' | 'driver';
-  message: string;
-  created_at: string;
+  text: string;
+  timestamp: string;
   is_read: boolean;
 }
 
@@ -18,11 +18,13 @@ interface ChatState {
   unreadCount: number;
   typing: boolean;
   loading: boolean;
-  sendMessage: (tripId: string, senderId: string, senderName: string, message: string) => Promise<void>;
-  loadHistory: (tripId: string) => Promise<void>;
+  connected: boolean;
+  sendMessage: (tripId: string, senderId: string, message: string, senderType: 'user' | 'driver') => Promise<void>;
+  loadMessages: (tripId: string) => Promise<void>;
   markAsRead: (messageId: string) => Promise<void>;
   setTyping: (isTyping: boolean) => void;
-  setupSocketListeners: (tripId: string) => void;
+  connectToChat: (tripId: string, userId: string) => void;
+  disconnectFromChat: () => void;
   clearMessages: () => void;
 }
 
@@ -31,16 +33,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
   unreadCount: 0,
   typing: false,
   loading: false,
+  connected: false,
 
-  sendMessage: async (tripId, senderId, senderName, message) => {
+  sendMessage: async (tripId, senderId, message, senderType) => {
     try {
       console.log('💬 Sending message...');
       const response = await api.post('/chat/send', {
         trip_id: tripId,
         sender_id: senderId,
-        sender_name: senderName,
         message,
-        sender_type: 'user'
+        sender_type: senderType
       });
 
       if (response.data.success) {
@@ -49,10 +51,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
           id: response.data.message_id || Date.now().toString(),
           trip_id: tripId,
           sender_id: senderId,
-          sender_name: senderName,
-          sender_type: 'user',
-          message,
-          created_at: new Date().toISOString(),
+          sender_type: senderType,
+          text: message,
+          timestamp: new Date().toISOString(),
           is_read: false
         };
         set(state => ({ messages: [...state.messages, newMessage] }));
@@ -63,20 +64,32 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  loadHistory: async (tripId) => {
+  loadMessages: async (tripId) => {
     set({ loading: true });
     try {
       console.log('📋 Loading chat history...');
-      const response = await api.get(`/chat/history?trip_id=${tripId}`);
+      const response = await api.post('/chat/history', {
+        trip_id: tripId
+      });
 
       if (response.data.success && response.data.messages) {
         console.log(`✅ Loaded ${response.data.messages.length} messages`);
-        set({ messages: response.data.messages, loading: false });
+        const formattedMessages = response.data.messages.map((msg: any) => ({
+          id: msg.message_id || msg.id,
+          trip_id: msg.trip_id,
+          sender_id: msg.sender_id,
+          sender_name: msg.sender_name,
+          sender_type: msg.sender_type,
+          text: msg.message || msg.text,
+          timestamp: msg.created_at || msg.timestamp,
+          is_read: msg.is_read || false
+        }));
+        set({ messages: formattedMessages, loading: false });
       } else {
         set({ messages: [], loading: false });
       }
     } catch (error) {
-      console.error('❌ Load history failed');
+      console.error('❌ Load messages failed');
       set({ messages: [], loading: false });
     }
   },
@@ -98,18 +111,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ typing: isTyping });
   },
 
-  setupSocketListeners: (tripId) => {
+  connectToChat: (tripId, userId) => {
+    console.log('🔌 Connecting to chat...');
+    
+    // Setup socket listeners
     socketService.on('new_message', (data: any) => {
       if (data.trip_id === tripId) {
         console.log('📥 New message received');
         const newMessage: Message = {
-          id: data.message_id,
+          id: data.message_id || Date.now().toString(),
           trip_id: data.trip_id,
           sender_id: data.sender_id,
           sender_name: data.sender_name,
           sender_type: data.sender_type,
-          message: data.message,
-          created_at: data.created_at,
+          text: data.message || data.text,
+          timestamp: data.created_at || new Date().toISOString(),
           is_read: false
         };
         set(state => ({ messages: [...state.messages, newMessage] }));
@@ -117,11 +133,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
     });
 
     socketService.on('user_typing', (data: any) => {
-      if (data.trip_id === tripId && data.sender_type === 'driver') {
+      if (data.trip_id === tripId && data.sender_id !== userId) {
         set({ typing: true });
         setTimeout(() => set({ typing: false }), 3000);
       }
     });
+
+    set({ connected: true });
+  },
+
+  disconnectFromChat: () => {
+    console.log('🔌 Disconnecting from chat...');
+    socketService.off('new_message');
+    socketService.off('user_typing');
+    set({ connected: false });
   },
 
   clearMessages: () => {
