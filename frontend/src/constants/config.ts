@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 
-// Determine environment - DEFAULT TO PRODUCTION for joltcab.com
-const ENV = process.env.NODE_ENV === 'development' ? 'development' : 'production';
+// FORCE PRODUCTION MODE - Always use joltcab.com
+const ENV = 'production';
 
 const config = {
   development: {
