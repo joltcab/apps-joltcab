@@ -1,35 +1,41 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/colors';
-import { format } from 'date-fns';
-
-interface Message {
-  id: string;
-  sender_id: string;
-  sender_name: string;
-  sender_type: 'user' | 'driver';
-  message: string;
-  created_at: string;
-}
 
 interface ChatBubbleProps {
-  message: Message;
-  currentUserId: string;
+  message: string;
+  timestamp: string;
+  isOwnMessage: boolean;
+  senderName?: string;
 }
 
-export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, currentUserId }) => {
-  const isMine = message.sender_id === currentUserId;
+export const ChatBubble: React.FC<ChatBubbleProps> = ({ 
+  message, 
+  timestamp, 
+  isOwnMessage,
+  senderName 
+}) => {
+  const formatTime = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
+  };
 
   return (
-    <View style={[styles.container, isMine ? styles.myContainer : styles.theirContainer]}>
-      {!isMine && <Text style={styles.senderName}>{message.sender_name}</Text>}
-      <View style={[styles.bubble, isMine ? styles.myBubble : styles.theirBubble]}>
-        <Text style={[styles.messageText, isMine ? styles.myText : styles.theirText]}>
-          {message.message}
+    <View style={[styles.container, isOwnMessage ? styles.myContainer : styles.theirContainer]}>
+      {!isOwnMessage && senderName && (
+        <Text style={styles.senderName}>{senderName}</Text>
+      )}
+      <View style={[styles.bubble, isOwnMessage ? styles.myBubble : styles.theirBubble]}>
+        <Text style={[styles.messageText, isOwnMessage ? styles.myText : styles.theirText]}>
+          {message}
         </Text>
       </View>
       <Text style={styles.timestamp}>
-        {format(new Date(message.created_at), 'HH:mm')}
+        {formatTime(timestamp)}
       </Text>
     </View>
   );
