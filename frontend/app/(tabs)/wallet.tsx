@@ -174,12 +174,14 @@ export default function WalletScreen() {
         transparent
         animationType="slide"
         onRequestClose={() => setShowTopUpModal(false)}
+        accessible={true}
+        accessibilityViewIsModal={true}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalOverlay} accessible={false}>
+          <View style={styles.modalContent} accessible={true}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Top Up Wallet</Text>
-              <TouchableOpacity onPress={() => setShowTopUpModal(false)}>
+              <TouchableOpacity onPress={() => setShowTopUpModal(false)} accessibilityLabel="Cerrar modal">
                 <Ionicons name="close" size={24} color={COLORS.text} />
               </TouchableOpacity>
             </View>
