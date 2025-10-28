@@ -178,6 +178,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  mapPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.lightGray,
+  },
+  mapPlaceholderText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: COLORS.textLight,
+  },
   bottomSheet: {
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 24,
