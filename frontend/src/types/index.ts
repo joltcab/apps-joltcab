@@ -1,12 +1,16 @@
 export interface User {
-  id: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  full_name: string;
   phone: string;
-  role: 'user' | 'driver' | 'admin';
-  profile_image?: string;
-  wallet_balance: number;
-  created_at: string;
+  country_phone_code?: string;
+  country?: string;
+  wallet: number;
+  picture?: string;
+  token?: string;
+  device_type?: string;
+  created_at?: string;
 }
 
 export interface Location {
