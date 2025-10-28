@@ -8,13 +8,16 @@ import {
   SafeAreaView,
   Alert,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS } from '../../src/constants/colors';
 import { useAuthStore } from '../../src/store/authStore';
+import { useStatsStore } from '../../src/store/statsStore';
 import { Button } from '../../src/components/Button';
+import { StatCard } from '../../src/components/StatCard';
 
 // Conditional import for MapView (only on native)
 let MapView: any;
