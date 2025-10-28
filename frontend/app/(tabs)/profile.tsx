@@ -86,7 +86,7 @@ export default function ProfileScreen() {
             ) : (
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>
-                  {user?.first_name.charAt(0).toUpperCase()}
+                  {user?.first_name?.charAt(0)?.toUpperCase() || 'U'}
                 </Text>
               </View>
             )}
