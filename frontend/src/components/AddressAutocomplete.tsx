@@ -64,15 +64,26 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         language: 'es',
       });
 
-      if (response.data.success && response.data.predictions) {
+      console.log('📡 Backend response:', response.data);
+
+      if (response.data.status === 'REQUEST_DENIED') {
+        console.error('❌ Google Maps API key not configured in backend');
+        Alert.alert(
+          'Error de Configuración',
+          'El backend necesita configurar la API key de Google Maps con Places API habilitado.'
+        );
+        setPredictions([]);
+      } else if (response.data.success && response.data.predictions) {
         console.log('✅ Found', response.data.predictions.length, 'predictions');
         setPredictions(response.data.predictions);
         setShowPredictions(true);
       } else {
+        console.log('⚠️ No predictions found');
         setPredictions([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Autocomplete error:', error);
+      console.error('Error details:', error.response?.data);
       setPredictions([]);
     } finally {
       setLoading(false);
