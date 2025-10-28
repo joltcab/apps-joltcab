@@ -32,7 +32,7 @@ if (Platform.OS !== 'web') {
 }
 
 export default function HomeScreen() {
-  const { user } = useAuthStore();
+  const { user, loading: authLoading } = useAuthStore();
   const { stats, fetchStats } = useStatsStore();
   const router = useRouter();
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
