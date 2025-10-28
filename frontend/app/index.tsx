@@ -1,15 +1,34 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { COLORS } from '../src/constants/colors';
+import { useAuthStore } from '../src/store/authStore';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+export default function SplashScreen() {
+  const router = useRouter();
+  const { loadUser, isAuthenticated } = useAuthStore();
 
-export default function Index() {
-  console.log(EXPO_PUBLIC_BACKEND_URL, "EXPO_PUBLIC_BACKEND_URL");
+  useEffect(() => {
+    const initialize = async () => {
+      await loadUser();
+      setTimeout(() => {
+        if (isAuthenticated) {
+          router.replace('/(tabs)/home');
+        } else {
+          router.replace('/onboarding');
+        }
+      }, 2000);
+    };
+
+    initialize();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/images/app-image.png")}
-        style={styles.image}
+        source={require('../assets/images/logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
       />
     </View>
   );
@@ -18,13 +37,12 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0c0c0c",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
+  logo: {
+    width: 200,
+    height: 200,
   },
 });
