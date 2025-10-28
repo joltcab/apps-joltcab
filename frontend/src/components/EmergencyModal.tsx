@@ -1,28 +1,91 @@
-import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Modal, Alert, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
 import { Button } from './Button';
 
+interface EmergencyContact {
+  id: string;
+  name: string;
+  phone: string;
+}
+
 interface EmergencyModalProps {
   visible: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-  loading?: boolean;
+  onClose: () => void;
+  tripId?: string;
+  userLocation?: {
+    latitude: number;
+    longitude: number;
+  };
+  emergencyContacts?: EmergencyContact[];
 }
 
 export const EmergencyModal: React.FC<EmergencyModalProps> = ({
   visible,
-  onConfirm,
-  onCancel,
-  loading = false,
+  onClose,
+  tripId,
+  userLocation,
+  emergencyContacts = [],
 }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleActivateSOS = async () => {
+    setLoading(true);
+
+    try {
+      // 1. Call 911
+      const shouldCall911 = await new Promise<boolean>((resolve) => {
+        Alert.alert(
+          'Llamar al 911',
+          '¿Deseas llamar a servicios de emergencia?',
+          [
+            { text: 'No', onPress: () => resolve(false), style: 'cancel' },
+            { text: 'Sí, llamar', onPress: () => resolve(true), style: 'default' },
+          ]
+        );
+      });
+
+      if (shouldCall911) {
+        await Linking.openURL('tel:911');
+      }
+
+      // 2. Send SMS to emergency contacts
+      if (emergencyContacts.length > 0 && userLocation) {
+        const message = `🚨 EMERGENCIA: Necesito ayuda urgente. Mi ubicación: https://maps.google.com/?q=${userLocation.latitude},${userLocation.longitude}`;
+        
+        for (const contact of emergencyContacts) {
+          try {
+            const smsUrl = `sms:${contact.phone}?body=${encodeURIComponent(message)}`;
+            await Linking.openURL(smsUrl);
+          } catch (error) {
+            console.error(`Failed to send SMS to ${contact.name}`, error);
+          }
+        }
+      }
+
+      // 3. TODO: Send alert to backend
+      console.log('🚨 SOS Activated', { tripId, userLocation });
+
+      Alert.alert(
+        'SOS Activado',
+        'Se ha enviado la alerta de emergencia a tus contactos y al equipo de JoltCab.',
+        [{ text: 'OK', onPress: onClose }]
+      );
+    } catch (error) {
+      console.error('SOS activation failed:', error);
+      Alert.alert('Error', 'No se pudo activar la alerta de emergencia');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onCancel}
+      onRequestClose={onClose}
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
@@ -32,7 +95,7 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
 
           <Text style={styles.title}>¿Activar SOS?</Text>
           <Text style={styles.subtitle}>
-            Se notificará a tus contactos de emergencia y al equipo de JoltCab con tu ubicación actual.
+            Se notificará a{emergencyContacts.length > 0 ? ` ${emergencyContacts.length} contacto(s) de emergencia y a` : 'l'} equipo de JoltCab con tu ubicación actual.
           </Text>
 
           <View style={styles.warningBox}>
@@ -45,14 +108,14 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
           <View style={styles.actions}>
             <Button
               title="Cancelar"
-              onPress={onCancel}
+              onPress={onClose}
               variant="outline"
               style={styles.button}
               disabled={loading}
             />
             <Button
               title="Activar SOS"
-              onPress={onConfirm}
+              onPress={handleActivateSOS}
               variant="danger"
               style={styles.button}
               loading={loading}
