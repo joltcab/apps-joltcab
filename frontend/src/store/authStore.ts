@@ -24,14 +24,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email: string, password: string) => {
     set({ loading: true });
     try {
-      const response = await api.post('/auth/login', { email, password });
+      console.log('🔐 Attempting login...');
+      const response = await api.post('/api/auth/login', { email, password });
       const { access_token, user } = response.data;
       
+      console.log('✅ Login successful:', user.email);
       await AsyncStorage.setItem('token', access_token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true, loading: false });
     } catch (error: any) {
+      console.error('❌ Login failed:', error.response?.data?.detail || error.message);
       set({ loading: false });
       throw new Error(error.response?.data?.detail || 'Login failed');
     }
@@ -40,7 +43,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (email: string, password: string, full_name: string, phone: string) => {
     set({ loading: true });
     try {
-      const response = await api.post('/auth/register', {
+      console.log('📝 Attempting registration...');
+      const response = await api.post('/api/auth/register', {
         email,
         password,
         full_name,
@@ -49,11 +53,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
       const { access_token, user } = response.data;
       
+      console.log('✅ Registration successful:', user.email);
       await AsyncStorage.setItem('token', access_token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       
       set({ user, token: access_token, isAuthenticated: true, loading: false });
     } catch (error: any) {
+      console.error('❌ Registration failed:', error.response?.data?.detail || error.message);
       set({ loading: false });
       throw new Error(error.response?.data?.detail || 'Registration failed');
     }
