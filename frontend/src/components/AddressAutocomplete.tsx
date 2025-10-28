@@ -83,7 +83,8 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         console.log('⚠️ Backend unavailable, trying direct Google Maps API...');
         
         // Fallback to direct Google Maps API
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyBUcfd1xbONq2LMKAAprsoRlBGPJQ2wkaM';
+        // Using Web App Google Key from Admin Panel
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyAg_Cy59g0GfGOGh9bvoDX5kQvqCYmf0NU';
         const googleResponse = await fetch(
           `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&key=${GOOGLE_MAPS_API_KEY}&language=es`,
           {
@@ -157,7 +158,8 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         console.log('⚠️ Backend unavailable, trying direct Google Maps API...');
         
         // Fallback to direct Google Maps API
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyBUcfd1xbONq2LMKAAprsoRlBGPJQ2wkaM';
+        // Using Web App Google Key from Admin Panel
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyAg_Cy59g0GfGOGh9bvoDX5kQvqCYmf0NU';
         const googleResponse = await fetch(
           `https://maps.googleapis.com/maps/api/place/details/json?place_id=${prediction.place_id}&key=${GOOGLE_MAPS_API_KEY}&fields=geometry`,
           {
