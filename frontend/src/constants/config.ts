@@ -68,3 +68,4 @@ export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51K4e7jLM1u3hGW9xjCIlayeJttpwjzPt
 console.log('🚀 JoltCab Environment:', ENV);
 console.log('🌐 API URL:', API_CONFIG.BASE_URL);
 console.log('🔌 Socket URL:', API_CONFIG.SOCKET_URL);
+console.log('✅ Configured for joltcab.com production');
