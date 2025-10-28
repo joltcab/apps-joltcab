@@ -86,9 +86,11 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
       transparent
       animationType="fade"
       onRequestClose={onClose}
+      accessible={true}
+      accessibilityViewIsModal={true}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
+      <View style={styles.overlay} accessible={false}>
+        <View style={styles.modal} accessible={true}>
           <View style={styles.iconContainer}>
             <Ionicons name="warning" size={64} color={COLORS.error} />
           </View>
