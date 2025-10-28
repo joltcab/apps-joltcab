@@ -24,28 +24,48 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (emailOrPhone: string, password: string) => {
     set({ loading: true });
     try {
-      console.log('🔐 Attempting login...');
+      console.log('🔐 Attempting login with joltcab.com...');
       
       // Detectar si es email o teléfono
       const isEmail = emailOrPhone.includes('@');
-      const loginData = isEmail 
-        ? { email: emailOrPhone, password }
-        : { phone: emailOrPhone, password };
+      const loginData = {
+        email: isEmail ? emailOrPhone : '',
+        phone: isEmail ? '' : emailOrPhone,
+        password,
+        device_type: 'web',
+        login_by: 'manual'
+      };
       
       console.log('📧 Login type:', isEmail ? 'Email' : 'Phone');
       
-      const response = await api.post('/api/auth/login', loginData);
-      const { access_token, user } = response.data;
+      const response = await api.post('/userslogin', loginData);
       
-      console.log('✅ Login successful:', user.email);
-      await AsyncStorage.setItem('token', access_token);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-      
-      set({ user, token: access_token, isAuthenticated: true, loading: false });
+      if (response.data.success) {
+        const { token, user_id, first_name, last_name, email, phone, wallet, picture } = response.data;
+        
+        const user: User = {
+          user_id,
+          first_name,
+          last_name,
+          email,
+          phone,
+          wallet,
+          picture,
+          token
+        };
+        
+        console.log('✅ Login successful:', user.email);
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        
+        set({ user, token, isAuthenticated: true, loading: false });
+      } else {
+        throw new Error('Login failed');
+      }
     } catch (error: any) {
-      console.error('❌ Login failed:', error.response?.data?.detail || error.message);
+      console.error('❌ Login failed:', error.response?.data?.message || error.message);
       set({ loading: false });
-      throw new Error(error.response?.data?.detail || 'Login failed');
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
   },
 
