@@ -87,6 +87,14 @@ const styles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    marginRight: 8,
+  },
   text: {
     fontSize: 16,
     fontWeight: '600',
