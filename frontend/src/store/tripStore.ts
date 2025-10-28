@@ -22,8 +22,8 @@ export const useTripStore = create<TripState>((set, get) => ({
   createTrip: async (userUid, userName, userLocation, destinationLocation, paymentMethod) => {
     set({ loading: true });
     try {
-      console.log('🚗 Creating ride in joltcab.com...');
-      const response = await api.post('/create_ride', {
+      console.log('🚗 Creating trip with /createtrip...');
+      const response = await api.post('/createtrip', {
         user_uid: userUid,
         user_name: userName,
         user_location: {
@@ -40,27 +40,27 @@ export const useTripStore = create<TripState>((set, get) => ({
       });
       
       if (response.data.success) {
-        console.log('✅ Ride created:', response.data.ride_id);
+        console.log('✅ Trip created:', response.data.trip_id || response.data.ride_id);
         const trip = {
-          id: response.data.ride_id,
+          id: response.data.trip_id || response.data.ride_id,
           user_id: userUid,
           driver_id: response.data.driver_uid || undefined,
           pickup_location: userLocation,
           dropoff_location: destinationLocation,
           status: response.data.status || 'requested',
           payment_method: paymentMethod,
-          fare: response.data.fare,
-          distance: response.data.distance,
+          fare: response.data.fare || 0,
+          distance: response.data.distance || 0,
           created_at: response.data.created_at || new Date().toISOString()
         } as Trip;
         
         set({ currentTrip: trip, loading: false });
         return trip;
       } else {
-        throw new Error('Failed to create ride');
+        throw new Error(response.data.message || 'Failed to create trip');
       }
     } catch (error: any) {
-      console.error('❌ Create ride failed:', error.response?.data?.message || error.message);
+      console.error('❌ Create trip failed:', error.response?.data?.message || error.message);
       set({ loading: false });
       throw new Error(error.response?.data?.message || 'Failed to create trip');
     }
@@ -69,12 +69,14 @@ export const useTripStore = create<TripState>((set, get) => ({
   getTrips: async (userUid: string) => {
     set({ loading: true });
     try {
-      console.log('📋 Fetching rides from joltcab.com...');
-      const response = await api.get(`/user_rides?user_uid=${userUid}`);
+      console.log('📋 Fetching trips with /userhistory...');
+      const response = await api.post('/userhistory', {
+        user_uid: userUid
+      });
       
-      if (response.data.success) {
-        const trips = response.data.rides.map((ride: any) => ({
-          id: ride.ride_id,
+      if (response.data.success && response.data.trips) {
+        const trips = response.data.trips.map((ride: any) => ({
+          id: ride.trip_id || ride.ride_id || ride.id,
           user_id: ride.user_uid,
           driver_id: ride.driver_uid || undefined,
           pickup_location: ride.user_location ? {
@@ -89,31 +91,35 @@ export const useTripStore = create<TripState>((set, get) => ({
           },
           status: ride.status,
           payment_method: ride.payment_method || 'card',
-          fare: ride.fare,
-          distance: ride.distance,
+          fare: ride.fare || 0,
+          distance: ride.distance || 0,
           rating: ride.rating,
           review: ride.review,
           created_at: ride.created_at
         }));
         
-        console.log(`✅ Loaded ${trips.length} rides`);
+        console.log(`✅ Loaded ${trips.length} trips`);
         set({ trips, loading: false });
+      } else {
+        set({ trips: [], loading: false });
       }
     } catch (error) {
-      console.error('❌ Failed to load rides');
-      set({ loading: false });
+      console.error('❌ Failed to load trips');
+      set({ trips: [], loading: false });
     }
   },
 
-  getTripById: async (rideId: string) => {
+  getTripById: async (tripId: string) => {
     try {
-      console.log('🔍 Fetching ride details...');
-      const response = await api.get(`/ride_details?ride_id=${rideId}`);
+      console.log('🔍 Fetching trip status with /usergettripstatus...');
+      const response = await api.post('/usergettripstatus', {
+        trip_id: tripId
+      });
       
-      if (response.data.success) {
-        const ride = response.data.ride;
+      if (response.data.success && response.data.trip) {
+        const ride = response.data.trip;
         return {
-          id: ride.ride_id,
+          id: ride.trip_id || ride.ride_id,
           user_id: ride.user_uid,
           driver_id: ride.driver_uid,
           pickup_location: ride.user_location,
@@ -124,12 +130,12 @@ export const useTripStore = create<TripState>((set, get) => ({
           },
           status: ride.status,
           payment_method: ride.payment_method,
-          fare: ride.fare,
-          distance: ride.distance,
+          fare: ride.fare || 0,
+          distance: ride.distance || 0,
           created_at: ride.created_at
         } as Trip;
       }
-      throw new Error('Ride not found');
+      throw new Error('Trip not found');
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to get trip');
     }
