@@ -1,23 +1,34 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, ActivityIndicator, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { COLORS } from '../src/constants/colors';
 import { useAuthStore } from '../src/store/authStore';
 
 export default function SplashScreen() {
   const router = useRouter();
-  const { loadUser, isAuthenticated } = useAuthStore();
+  const { loadUser, isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
     const initialize = async () => {
+      console.log('🚀 Initializing app...');
       await loadUser();
+      
+      // Wait a bit to show splash, then navigate
       setTimeout(() => {
-        if (isAuthenticated) {
+        const isAuth = useAuthStore.getState().isAuthenticated;
+        const currentUser = useAuthStore.getState().user;
+        
+        console.log('🔍 Auth Status:', isAuth);
+        console.log('👤 User:', currentUser?.email || 'No user');
+        
+        if (isAuth && currentUser) {
+          console.log('✅ Redirecting to home...');
           router.replace('/(tabs)/home');
         } else {
+          console.log('⚠️ Redirecting to onboarding...');
           router.replace('/onboarding');
         }
-      }, 2000);
+      }, 1500);
     };
 
     initialize();
