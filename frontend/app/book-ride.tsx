@@ -16,8 +16,10 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS } from '../src/constants/colors';
 import { useTripStore } from '../src/store/tripStore';
+import { useNegotiationStore } from '../src/store/negotiationStore';
 import { useAuthStore } from '../src/store/authStore';
 import { Button } from '../src/components/Button';
+import { WhatsAppButton } from '../src/components/WhatsAppButton';
 
 // Conditional import for MapView (only on native)
 let MapView: any;
