@@ -82,10 +82,8 @@ export default function OnboardingScreen() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) => {
-          const index = Math.round(event.nativeEvent.contentOffset.x / width);
-          setCurrentIndex(index);
-        }}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         keyExtractor={(item) => item.id}
       />
 
