@@ -129,16 +129,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true });
     try {
       const token = await AsyncStorage.getItem('token');
-      if (token) {
-        console.log('🔄 Loading user profile...');
-        const response = await api.get('/api/auth/me');
-        console.log('✅ User profile loaded:', response.data.email);
-        set({ user: response.data, token, isAuthenticated: true, loading: false });
+      const userStr = await AsyncStorage.getItem('user');
+      
+      if (token && userStr) {
+        const user = JSON.parse(userStr);
+        console.log('✅ User loaded from storage:', user.email);
+        set({ user, token, isAuthenticated: true, loading: false });
       } else {
         set({ loading: false });
       }
     } catch (error) {
-      console.error('❌ Failed to load user profile');
+      console.error('❌ Failed to load user');
       await get().logout();
       set({ loading: false });
     }
