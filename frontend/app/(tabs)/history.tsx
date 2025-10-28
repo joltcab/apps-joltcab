@@ -11,22 +11,26 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../src/constants/colors';
 import { useTripStore } from '../../src/store/tripStore';
+import { useAuthStore } from '../../src/store/authStore';
 import { TripCard } from '../../src/components/TripCard';
 import { LoadingSpinner } from '../../src/components/LoadingSpinner';
 import { Trip } from '../../src/types';
 
 export default function HistoryScreen() {
   const { trips, getTrips, loading } = useTripStore();
+  const { user } = useAuthStore();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
     loadTrips();
-  }, []);
+  }, [user]);
 
   const loadTrips = async () => {
     try {
-      await getTrips();
+      if (user?.user_id) {
+        await getTrips(user.user_id);
+      }
     } catch (error) {
       console.error('Error loading trips:', error);
     }
