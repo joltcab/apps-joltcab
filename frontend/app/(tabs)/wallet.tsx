@@ -129,7 +129,7 @@ export default function WalletScreen() {
           </TouchableOpacity>
         </View>
         <Text style={styles.balanceLabel}>Available Balance</Text>
-        <Text style={styles.balanceAmount}>${(user?.wallet_balance || 0).toFixed(2)}</Text>
+        <Text style={styles.balanceAmount}>${(user?.wallet || 0).toFixed(2)}</Text>
         <Button
           title="Top Up Wallet"
           onPress={() => setShowTopUpModal(true)}
