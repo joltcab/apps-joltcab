@@ -1,4 +1,5 @@
 export interface User {
+  uid?: string; // Alias for user_id for backward compatibility
   user_id: string;
   first_name: string;
   last_name: string;
