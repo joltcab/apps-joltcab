@@ -496,6 +496,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
+  autocompleteWrapper: {
+    marginBottom: 12,
+    zIndex: 10,
+  },
   locationInput: {
     flexDirection: 'row',
     alignItems: 'center',
