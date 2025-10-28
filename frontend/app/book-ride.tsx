@@ -12,18 +12,29 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS } from '../src/constants/colors';
 import { useTripStore } from '../src/store/tripStore';
 import { Button } from '../src/components/Button';
 
+// Conditional import for MapView (only on native)
+let MapView: any;
+let Marker: any;
+let PROVIDER_GOOGLE: any;
+
+if (Platform.OS !== 'web') {
+  const RNMaps = require('react-native-maps');
+  MapView = RNMaps.default;
+  Marker = RNMaps.Marker;
+  PROVIDER_GOOGLE = RNMaps.PROVIDER_GOOGLE;
+}
+
 type LocationType = 'pickup' | 'dropoff';
 
 export default function BookRideScreen() {
   const router = useRouter();
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<any>(null);
   const { createTrip, loading } = useTripStore();
 
   const [currentLocation, setCurrentLocation] = useState<any>(null);
@@ -137,19 +148,9 @@ export default function BookRideScreen() {
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Book a Ride</Text>
-        <View style={{ width: 40 }} />
-      </View>
-
-      {/* Map */}
-      <View style={styles.mapContainer}>
+  const renderMap = () => {
+    if (Platform.OS !== 'web') {
+      return (
         <MapView
           ref={mapRef}
           provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
@@ -183,6 +184,33 @@ export default function BookRideScreen() {
             />
           )}
         </MapView>
+      );
+    } else {
+      return (
+        <View style={[styles.map, styles.mapPlaceholder]}>
+          <Ionicons name="map" size={64} color={COLORS.primary} />
+          <Text style={styles.mapPlaceholderText}>
+            Map available on mobile app
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Book a Ride</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      {/* Map */}
+      <View style={styles.mapContainer}>
+        {renderMap()}
 
         {/* Location Inputs */}
         <View style={styles.locationInputsContainer}>
@@ -306,6 +334,16 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+  },
+  mapPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.lightGray,
+  },
+  mapPlaceholderText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: COLORS.textLight,
   },
   locationInputsContainer: {
     position: 'absolute',
