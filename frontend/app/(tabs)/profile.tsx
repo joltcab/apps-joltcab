@@ -43,6 +43,35 @@ export default function ProfileScreen() {
       onPress: () => Alert.alert('Coming Soon', 'Edit profile feature will be available soon'),
     },
     {
+      icon: 'chatbubbles',
+      title: 'Messages',
+      onPress: () => {
+        if (user) {
+          router.push({
+            pathname: '/chat',
+            params: { tripId: 'demo', driverName: 'Demo Driver' }
+          });
+        } else {
+          Alert.alert('Error', 'Please login first');
+        }
+      },
+    },
+    {
+      icon: 'share-social',
+      title: 'Share Trip',
+      onPress: () => router.push('/share-trip'),
+    },
+    {
+      icon: 'navigate',
+      title: 'Navigation',
+      onPress: () => router.push('/navigation'),
+    },
+    {
+      icon: 'warning',
+      title: 'Emergency SOS',
+      onPress: () => router.push('/sos'),
+    },
+    {
       icon: 'notifications',
       title: 'Notifications',
       onPress: () => Alert.alert('Coming Soon', 'Notification settings will be available soon'),
