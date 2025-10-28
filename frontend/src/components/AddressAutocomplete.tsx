@@ -132,20 +132,54 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
       setShowPredictions(false);
       setSearchText(prediction.description);
 
-      // Get place details with coordinates
-      const response = await api.post('/maps/place-details', {
-        place_id: prediction.place_id,
-      });
-
-      if (response.data.success && response.data.result) {
-        const location = response.data.result.geometry.location;
-        console.log('✅ Place details retrieved:', location);
-
-        onPlaceSelected({
-          address: prediction.description,
-          latitude: location.lat,
-          longitude: location.lng,
+      // Try backend first
+      try {
+        const response = await api.post('/maps/place-details', {
+          place_id: prediction.place_id,
         });
+
+        if (response.data.success && response.data.result) {
+          const location = response.data.result.geometry.location;
+          console.log('✅ Place details retrieved from backend:', location);
+
+          onPlaceSelected({
+            address: prediction.description,
+            latitude: location.lat,
+            longitude: location.lng,
+          });
+          
+          Keyboard.dismiss();
+          setPredictions([]);
+          setLoading(false);
+          return;
+        }
+      } catch (backendError) {
+        console.log('⚠️ Backend unavailable, trying direct Google Maps API...');
+        
+        // Fallback to direct Google Maps API
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyBUcfd1xbONq2LMKAAprsoRlBGPJQ2wkaM';
+        const googleResponse = await fetch(
+          `https://maps.googleapis.com/maps/api/place/details/json?place_id=${prediction.place_id}&key=${GOOGLE_MAPS_API_KEY}&fields=geometry`,
+          {
+            method: 'GET',
+          }
+        );
+        
+        const data = await googleResponse.json();
+        console.log('📡 Direct Google Maps place details:', data);
+        
+        if (data.status === 'OK' && data.result) {
+          const location = data.result.geometry.location;
+          console.log('✅ Place details retrieved from Google Maps:', location);
+
+          onPlaceSelected({
+            address: prediction.description,
+            latitude: location.lat,
+            longitude: location.lng,
+          });
+        } else {
+          Alert.alert('Error', 'No se pudieron obtener los detalles de la dirección');
+        }
       }
 
       Keyboard.dismiss();
