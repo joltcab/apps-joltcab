@@ -79,12 +79,21 @@ export default function RegisterScreen() {
 
         <View style={styles.form}>
           <Input
-            label="Full Name"
-            placeholder="Enter your full name"
-            value={formData.fullName}
-            onChangeText={(text) => setFormData({ ...formData, fullName: text })}
+            label="First Name"
+            placeholder="Enter your first name"
+            value={formData.firstName}
+            onChangeText={(text) => setFormData({ ...formData, firstName: text })}
             icon="person"
-            error={errors.fullName}
+            error={errors.firstName}
+          />
+
+          <Input
+            label="Last Name"
+            placeholder="Enter your last name"
+            value={formData.lastName}
+            onChangeText={(text) => setFormData({ ...formData, lastName: text })}
+            icon="person"
+            error={errors.lastName}
           />
 
           <Input
