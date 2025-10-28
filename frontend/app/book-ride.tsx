@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { COLORS } from '../src/constants/colors';
 import { useTripStore } from '../src/store/tripStore';
+import { useAuthStore } from '../src/store/authStore';
 import { Button } from '../src/components/Button';
 
 // Conditional import for MapView (only on native)
