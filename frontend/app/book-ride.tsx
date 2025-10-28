@@ -273,19 +273,38 @@ export default function BookRideScreen() {
             <Ionicons name="location" size={20} color={COLORS.primary} />
             <TextInput
               style={styles.input}
-              placeholder="Pickup location"
+              placeholder="Enter pickup address"
               value={pickupAddress}
               onChangeText={setPickupAddress}
+              onSubmitEditing={handleSetPickupFromInput}
             />
+            <TouchableOpacity onPress={handleSetPickupFromInput} style={styles.setButton}>
+              <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+            </TouchableOpacity>
           </View>
           <View style={styles.locationInput}>
             <Ionicons name="flag" size={20} color={COLORS.error} />
             <TextInput
               style={styles.input}
-              placeholder="Dropoff location"
+              placeholder="Enter dropoff address"
               value={dropoffAddress}
               onChangeText={setDropoffAddress}
+              onSubmitEditing={handleSetDropoffFromInput}
             />
+            <TouchableOpacity onPress={handleSetDropoffFromInput} style={styles.setButton}>
+              <Ionicons name="checkmark" size={20} color={COLORS.error} />
+            </TouchableOpacity>
+          </View>
+          
+          {/* Quick Actions */}
+          <View style={styles.quickActionsRow}>
+            <TouchableOpacity 
+              style={styles.quickActionBtn}
+              onPress={handleUseCurrentLocation}
+            >
+              <Ionicons name="navigate" size={16} color={COLORS.primary} />
+              <Text style={styles.quickActionBtnText}>Use Current Location</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
