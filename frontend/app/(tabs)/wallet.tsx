@@ -157,7 +157,7 @@ export default function WalletScreen() {
         <FlatList
           data={transactions}
           renderItem={renderTransaction}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => item.id || `transaction-${index}`}
           contentContainerStyle={styles.transactionsList}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
