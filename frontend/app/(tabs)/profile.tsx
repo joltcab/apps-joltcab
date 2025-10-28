@@ -81,17 +81,17 @@ export default function ProfileScreen() {
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
-            {user?.profile_image ? (
-              <Image source={{ uri: user.profile_image }} style={styles.avatar} />
+            {user?.picture ? (
+              <Image source={{ uri: user.picture }} style={styles.avatar} />
             ) : (
               <View style={styles.avatarPlaceholder}>
                 <Text style={styles.avatarText}>
-                  {user?.full_name.charAt(0).toUpperCase()}
+                  {user?.first_name.charAt(0).toUpperCase()}
                 </Text>
               </View>
             )}
           </View>
-          <Text style={styles.userName}>{user?.full_name}</Text>
+          <Text style={styles.userName}>{user?.first_name} {user?.last_name}</Text>
           <Text style={styles.userEmail}>{user?.email}</Text>
           <Text style={styles.userPhone}>{user?.phone}</Text>
 
@@ -110,7 +110,7 @@ export default function ProfileScreen() {
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Ionicons name="wallet" size={24} color={COLORS.success} />
-              <Text style={styles.statValue}>${(user?.wallet_balance || 0).toFixed(0)}</Text>
+              <Text style={styles.statValue}>${(user?.wallet || 0).toFixed(0)}</Text>
               <Text style={styles.statLabel}>Balance</Text>
             </View>
           </View>
