@@ -313,31 +313,50 @@ export default function BookRideScreen() {
 
         {/* Location Inputs */}
         <View style={styles.locationInputsContainer}>
-          <View style={styles.locationInput}>
-            <Ionicons name="location" size={20} color={COLORS.primary} />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter pickup address"
-              value={pickupAddress}
-              onChangeText={setPickupAddress}
-              onSubmitEditing={handleSetPickupFromInput}
+          {/* Pickup Address */}
+          <View style={styles.autocompleteWrapper}>
+            <AddressAutocomplete
+              placeholder="¿Dónde estás?"
+              icon="location"
+              iconColor={COLORS.primary}
+              initialValue={pickupAddress}
+              onPlaceSelected={(place) => {
+                console.log('✅ Pickup selected:', place);
+                setPickupLocation({
+                  latitude: place.latitude,
+                  longitude: place.longitude,
+                  address: place.address,
+                });
+                setPickupAddress(place.address);
+                
+                if (dropoffLocation) {
+                  calculateFare({ latitude: place.latitude, longitude: place.longitude }, dropoffLocation);
+                }
+              }}
             />
-            <TouchableOpacity onPress={handleSetPickupFromInput} style={styles.setButton}>
-              <Ionicons name="checkmark" size={20} color={COLORS.primary} />
-            </TouchableOpacity>
           </View>
-          <View style={styles.locationInput}>
-            <Ionicons name="flag" size={20} color={COLORS.error} />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter dropoff address"
-              value={dropoffAddress}
-              onChangeText={setDropoffAddress}
-              onSubmitEditing={handleSetDropoffFromInput}
+
+          {/* Dropoff Address */}
+          <View style={styles.autocompleteWrapper}>
+            <AddressAutocomplete
+              placeholder="¿A dónde vas?"
+              icon="flag"
+              iconColor={COLORS.error}
+              initialValue={dropoffAddress}
+              onPlaceSelected={(place) => {
+                console.log('✅ Dropoff selected:', place);
+                setDropoffLocation({
+                  latitude: place.latitude,
+                  longitude: place.longitude,
+                  address: place.address,
+                });
+                setDropoffAddress(place.address);
+                
+                if (pickupLocation) {
+                  calculateFare(pickupLocation, { latitude: place.latitude, longitude: place.longitude });
+                }
+              }}
             />
-            <TouchableOpacity onPress={handleSetDropoffFromInput} style={styles.setButton}>
-              <Ionicons name="checkmark" size={20} color={COLORS.error} />
-            </TouchableOpacity>
           </View>
           
           {/* Quick Actions */}
@@ -347,7 +366,7 @@ export default function BookRideScreen() {
               onPress={handleUseCurrentLocation}
             >
               <Ionicons name="navigate" size={16} color={COLORS.primary} />
-              <Text style={styles.quickActionBtnText}>Use Current Location</Text>
+              <Text style={styles.quickActionBtnText}>Usar Ubicación Actual</Text>
             </TouchableOpacity>
           </View>
         </View>
