@@ -40,17 +40,18 @@ export default function ProfileScreen() {
     {
       icon: 'person',
       title: 'Edit Profile',
-      onPress: () => Alert.alert('Coming Soon', 'Edit profile feature will be available soon'),
+      onPress: () => {
+        console.log('📝 Edit Profile pressed');
+        Alert.alert('Coming Soon', 'Edit profile feature will be available soon');
+      },
     },
     {
       icon: 'chatbubbles',
       title: 'Messages',
       onPress: () => {
+        console.log('💬 Messages pressed');
         if (user) {
-          router.push({
-            pathname: '/chat',
-            params: { tripId: 'demo', driverName: 'Demo Driver' }
-          });
+          router.push('/chat' as any);
         } else {
           Alert.alert('Error', 'Please login first');
         }
@@ -59,37 +60,58 @@ export default function ProfileScreen() {
     {
       icon: 'share-social',
       title: 'Share Trip',
-      onPress: () => router.push('/share-trip'),
+      onPress: () => {
+        console.log('📤 Share Trip pressed');
+        router.push('/share-trip' as any);
+      },
     },
     {
       icon: 'navigate',
       title: 'Navigation',
-      onPress: () => router.push('/navigation'),
+      onPress: () => {
+        console.log('🗺️ Navigation pressed');
+        router.push('/navigation' as any);
+      },
     },
     {
       icon: 'warning',
       title: 'Emergency SOS',
-      onPress: () => router.push('/sos'),
+      onPress: () => {
+        console.log('🚨 SOS pressed');
+        router.push('/sos' as any);
+      },
     },
     {
       icon: 'notifications',
       title: 'Notifications',
-      onPress: () => Alert.alert('Coming Soon', 'Notification settings will be available soon'),
+      onPress: () => {
+        console.log('🔔 Notifications pressed');
+        Alert.alert('Coming Soon', 'Notification settings will be available soon');
+      },
     },
     {
       icon: 'card',
       title: 'Payment Methods',
-      onPress: () => Alert.alert('Coming Soon', 'Payment methods management will be available soon'),
+      onPress: () => {
+        console.log('💳 Payment Methods pressed');
+        Alert.alert('Coming Soon', 'Payment methods management will be available soon');
+      },
     },
     {
       icon: 'help-circle',
       title: 'Help & Support',
-      onPress: () => Alert.alert('Help', 'Contact us at support@joltcab.com'),
+      onPress: () => {
+        console.log('❓ Help pressed');
+        Alert.alert('Help', 'Contact us at support@joltcab.com');
+      },
     },
     {
       icon: 'information-circle',
       title: 'About',
-      onPress: () => Alert.alert('JoltCab', 'Version 1.0.0\n\nYour reliable ride partner'),
+      onPress: () => {
+        console.log('ℹ️ About pressed');
+        Alert.alert('JoltCab', 'Version 1.0.0\n\nYour reliable ride partner');
+      },
     },
     {
       icon: 'log-out',
