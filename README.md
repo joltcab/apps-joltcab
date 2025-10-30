@@ -124,7 +124,7 @@
 - **Notificaciones**: Firebase Cloud Messaging
 
 ### Servicios Externos
-- **IA y Chat**: Emergent IA Module (GPT-4)
+- **IA y Chat**: OpenAI (GPT-4) - Integrado desde backend
 - **Mensajería**: Twilio WhatsApp Business API
 - **Mapas**: Google Maps Platform (Places, Distance Matrix, Directions)
 - **Notificaciones**: Firebase
