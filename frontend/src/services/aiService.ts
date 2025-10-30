@@ -1,6 +1,7 @@
-import api from './api';
+import { IAIProvider } from './ai/IAIProvider';
+import { EmergentIAProvider } from './ai/EmergentIAProvider';
 
-// URLs base para Emergent IA
+// URLs base para servicios de IA
 const EMERGENT_IA_URL = 'https://admin.joltcab.com/api/v1';
 const EMERGENT_IA_URL_DEV = 'https://0ei9df5g.up.railway.app/api/v1';
 
@@ -75,6 +76,28 @@ export interface WhatsAppBooking {
 }
 
 class AIService {
+  private provider: IAIProvider;
+
+  constructor() {
+    // Por defecto usamos Emergent IA Provider
+    this.provider = new EmergentIAProvider(false); // false = production
+  }
+
+  /**
+   * Cambiar proveedor de IA (para futura flexibilidad)
+   */
+  setProvider(provider: IAIProvider) {
+    this.provider = provider;
+    console.log(`🔄 AI Provider changed to: ${provider.name}`);
+  }
+
+  /**
+   * Obtener nombre del proveedor actual
+   */
+  getCurrentProvider(): string {
+    return this.provider.name;
+  }
+
   /**
    * Calcular precio dinámico con IA
    */
@@ -129,36 +152,16 @@ class AIService {
   }
 
   /**
-   * Chat con soporte IA usando Emergent IA
+   * Chat con soporte IA usando el proveedor configurado
    */
   async sendMessage(data: ChatMessage): Promise<ChatResponse> {
     try {
-      console.log('💬 Sending message to Emergent IA...');
-      const response = await fetch(`${BASE_URL}/emergentIA/chat/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: data.message,
-          userId: data.userId || data.user_email,
-          conversationId: data.conversationId,
-        }),
-      });
-
-      const result = await response.json();
-      
-      if (result.success || result.response) {
-        console.log('✅ AI response received');
-        return {
-          success: true,
-          response: result.response || result.message,
-          conversationId: result.conversationId,
-          timestamp: result.timestamp || new Date().toISOString(),
-        };
-      }
-      
-      throw new Error('Failed to get AI response');
+      console.log(`💬 Sending message via ${this.provider.name}...`);
+      return await this.provider.sendMessage(
+        data.message,
+        data.userId || data.user_email,
+        data.conversationId
+      );
     } catch (error: any) {
       console.error('❌ AI chat error:', error.message);
       
@@ -177,26 +180,20 @@ class AIService {
   async getHistory(data: ChatHistoryRequest): Promise<{ success: boolean; messages: any[] }> {
     try {
       console.log('📋 Getting chat history...');
-      const params = new URLSearchParams();
-      if (data.userId) params.append('userId', data.userId);
-      if (data.conversationId) params.append('conversationId', data.conversationId);
-      if (data.limit) params.append('limit', data.limit.toString());
-
-      const response = await fetch(`${BASE_URL}/emergentIA/chat/getHistory?${params}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const result = await response.json();
       
-      if (result.success) {
-        console.log('✅ Chat history retrieved');
-        return result;
+      if (this.provider.getHistory) {
+        return await this.provider.getHistory(
+          data.userId || '',
+          data.conversationId,
+          data.limit
+        );
       }
       
-      throw new Error('Failed to get history');
+      // Si el proveedor no tiene getHistory, devolver vacío
+      return {
+        success: false,
+        messages: [],
+      };
     } catch (error: any) {
       console.error('❌ Get history error:', error.message);
       return {
