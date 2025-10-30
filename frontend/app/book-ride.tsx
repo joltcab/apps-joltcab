@@ -21,6 +21,8 @@ import { Button } from '../src/components/Button';
 import { WhatsAppButton } from '../src/components/WhatsAppButton';
 import { AddressAutocomplete } from '../src/components/AddressAutocomplete';
 import api from '../src/services/api';
+import { aiService } from '../src/services/aiService';
+import { Linking } from 'react-native';
 
 // Conditional import for MapView (only on native)
 let MapView: any;
