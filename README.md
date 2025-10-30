@@ -434,6 +434,7 @@ interface IAIProvider {
 }
 
 // Implementación modular - fácil de cambiar
+class BackendAIProvider implements IAIProvider { ... }  // Actual (OpenAI vía backend)
 class EmergentIAProvider implements IAIProvider { ... }
 class OpenAIProvider implements IAIProvider { ... }
 class ClaudeProvider implements IAIProvider { ... }
