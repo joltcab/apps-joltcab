@@ -1,5 +1,12 @@
 import api from './api';
 
+// URLs base para Emergent IA
+const EMERGENT_IA_URL = 'https://admin.joltcab.com/api/v1';
+const EMERGENT_IA_URL_DEV = 'https://0ei9df5g.up.railway.app/api/v1';
+
+// Usar production por defecto
+const BASE_URL = EMERGENT_IA_URL;
+
 // Tipos para los servicios de IA
 export interface DynamicPricingRequest {
   pickup_lat: number;
@@ -29,15 +36,23 @@ export interface DynamicPricingResponse {
 
 export interface ChatMessage {
   message: string;
+  userId?: string;
+  conversationId?: string;
   user_email?: string;
-  role: 'user' | 'driver' | 'corporate' | 'hotel' | 'dispatcher';
-  conversation_history?: Array<{ role: string; content: string }>;
+  role?: 'user' | 'driver' | 'corporate' | 'hotel' | 'dispatcher';
 }
 
 export interface ChatResponse {
   success: boolean;
   response: string;
+  conversationId?: string;
   timestamp: string;
+}
+
+export interface ChatHistoryRequest {
+  userId?: string;
+  conversationId?: string;
+  limit?: number;
 }
 
 export interface WhatsAppNotification {
@@ -66,11 +81,19 @@ class AIService {
   async calculateDynamicPrice(data: DynamicPricingRequest): Promise<DynamicPricingResponse> {
     try {
       console.log('💰 Calculating dynamic price with AI...');
-      const response = await api.post('/api/v1/ai/dynamic-pricing-advanced', data);
+      const response = await fetch(`${BASE_URL}/ai/dynamic-pricing-advanced`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
       
-      if (response.data.success) {
-        console.log('✅ Dynamic price calculated:', response.data.final_price);
-        return response.data;
+      if (result.success) {
+        console.log('✅ Dynamic price calculated:', result.final_price);
+        return result;
       }
       
       throw new Error('Failed to calculate price');
@@ -106,16 +129,33 @@ class AIService {
   }
 
   /**
-   * Chat con soporte IA
+   * Chat con soporte IA usando Emergent IA
    */
-  async chatWithSupport(data: ChatMessage): Promise<ChatResponse> {
+  async sendMessage(data: ChatMessage): Promise<ChatResponse> {
     try {
-      console.log('💬 Sending message to AI support...');
-      const response = await api.post('/api/v1/ai/chatbot', data);
+      console.log('💬 Sending message to Emergent IA...');
+      const response = await fetch(`${BASE_URL}/emergentIA/chat/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: data.message,
+          userId: data.userId || data.user_email,
+          conversationId: data.conversationId,
+        }),
+      });
+
+      const result = await response.json();
       
-      if (response.data.success) {
+      if (result.success || result.response) {
         console.log('✅ AI response received');
-        return response.data;
+        return {
+          success: true,
+          response: result.response || result.message,
+          conversationId: result.conversationId,
+          timestamp: result.timestamp || new Date().toISOString(),
+        };
       }
       
       throw new Error('Failed to get AI response');
@@ -132,15 +172,58 @@ class AIService {
   }
 
   /**
+   * Obtener historial de chat
+   */
+  async getHistory(data: ChatHistoryRequest): Promise<{ success: boolean; messages: any[] }> {
+    try {
+      console.log('📋 Getting chat history...');
+      const params = new URLSearchParams();
+      if (data.userId) params.append('userId', data.userId);
+      if (data.conversationId) params.append('conversationId', data.conversationId);
+      if (data.limit) params.append('limit', data.limit.toString());
+
+      const response = await fetch(`${BASE_URL}/emergentIA/chat/getHistory?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ Chat history retrieved');
+        return result;
+      }
+      
+      throw new Error('Failed to get history');
+    } catch (error: any) {
+      console.error('❌ Get history error:', error.message);
+      return {
+        success: false,
+        messages: [],
+      };
+    }
+  }
+
+  /**
    * Enviar notificación por WhatsApp
    */
   async sendWhatsAppNotification(data: WhatsAppNotification): Promise<{ success: boolean; message: string }> {
     try {
       console.log('📱 Sending WhatsApp notification...');
-      const response = await api.post('/api/v1/whatsapp/notify', data);
+      const response = await fetch(`${BASE_URL}/whatsapp/notify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
       
       console.log('✅ WhatsApp notification sent');
-      return response.data;
+      return result;
     } catch (error: any) {
       console.error('❌ WhatsApp notification error:', error.message);
       throw error;
@@ -153,10 +236,18 @@ class AIService {
   async createWhatsAppBooking(data: WhatsAppBooking): Promise<{ success: boolean; booking_id: string; whatsapp_url: string }> {
     try {
       console.log('🚕 Creating WhatsApp booking...');
-      const response = await api.post('/api/v1/whatsapp/booking', data);
+      const response = await fetch(`${BASE_URL}/whatsapp/booking`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
       
       console.log('✅ WhatsApp booking created');
-      return response.data;
+      return result;
     } catch (error: any) {
       console.error('❌ WhatsApp booking error:', error.message);
       
