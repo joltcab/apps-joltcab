@@ -482,8 +482,40 @@ export default function BookRideScreen() {
           {/* Fare Estimate */}
           {estimatedFare && (
             <View style={styles.fareContainer}>
-              <Text style={styles.fareLabel}>Estimated Fare</Text>
+              <View>
+                <Text style={styles.fareLabel}>
+                  {loadingPrice ? 'Calculando precio...' : dynamicPricing ? 'Precio Dinámico con IA' : 'Estimated Fare'}
+                </Text>
+                {dynamicPricing && (
+                  <Text style={styles.fareExplanation}>
+                    {dynamicPricing.explanation || 'Precio optimizado por IA'}
+                  </Text>
+                )}
+              </View>
               <Text style={styles.fareAmount}>${estimatedFare.toFixed(2)}</Text>
+            </View>
+          )}
+          
+          {/* Dynamic Pricing Info */}
+          {dynamicPricing && (
+            <View style={styles.pricingDetailsContainer}>
+              <Text style={styles.pricingDetailsTitle}>Detalles del Precio</Text>
+              <View style={styles.pricingDetailRow}>
+                <Text style={styles.pricingDetailLabel}>Precio Base:</Text>
+                <Text style={styles.pricingDetailValue}>${dynamicPricing.base_price.toFixed(2)}</Text>
+              </View>
+              <View style={styles.pricingDetailRow}>
+                <Text style={styles.pricingDetailLabel}>Distancia:</Text>
+                <Text style={styles.pricingDetailValue}>{dynamicPricing.factors.distance_km.toFixed(2)} km</Text>
+              </View>
+              <View style={styles.pricingDetailRow}>
+                <Text style={styles.pricingDetailLabel}>Duración estimada:</Text>
+                <Text style={styles.pricingDetailValue}>{Math.round(dynamicPricing.factors.duration_min)} min</Text>
+              </View>
+              <View style={styles.pricingDetailRow}>
+                <Text style={styles.pricingDetailLabel}>Multiplicador de demanda:</Text>
+                <Text style={styles.pricingDetailValue}>{dynamicPricing.surge_multiplier.toFixed(2)}x</Text>
+              </View>
             </View>
           )}
 
@@ -495,6 +527,19 @@ export default function BookRideScreen() {
             disabled={!pickupLocation || !dropoffLocation}
             style={styles.bookButton}
           />
+          
+          {/* WhatsApp Button */}
+          <TouchableOpacity
+            style={[
+              styles.whatsappButton,
+              (!pickupLocation || !dropoffLocation) && styles.whatsappButtonDisabled,
+            ]}
+            onPress={handleWhatsAppBooking}
+            disabled={!pickupLocation || !dropoffLocation}
+          >
+            <Ionicons name="logo-whatsapp" size={24} color={COLORS.white} />
+            <Text style={styles.whatsappButtonText}>Reservar por WhatsApp</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
