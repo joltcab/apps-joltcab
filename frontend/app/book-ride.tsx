@@ -50,6 +50,9 @@ export default function BookRideScreen() {
   const [dropoffAddress, setDropoffAddress] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'cash' | 'card' | 'wallet'>('card');
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
+  const [dynamicPricing, setDynamicPricing] = useState<any>(null);
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  const [useDynamicPricing, setUseDynamicPricing] = useState(true);
 
   useEffect(() => {
     getCurrentLocation();
