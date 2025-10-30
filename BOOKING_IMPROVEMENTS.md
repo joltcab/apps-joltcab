@@ -77,7 +77,7 @@ Step 5: Click "Book Ride"
 
 ### Test on Web:
 ```bash
-URL: https://rideshare-app-173.preview.emergentagent.com
+URL: https://ride-ai-1.preview.emergentagent.com
 
 1. Register/Login
 2. Go to Home → "Book a Ride"
