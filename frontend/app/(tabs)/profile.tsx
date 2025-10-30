@@ -98,6 +98,14 @@ export default function ProfileScreen() {
       },
     },
     {
+      icon: 'chatbubble-ellipses',
+      title: 'Chat con Soporte IA',
+      onPress: () => {
+        console.log('🤖 AI Support pressed');
+        router.push('/ai-support' as any);
+      },
+    },
+    {
       icon: 'help-circle',
       title: 'Help & Support',
       onPress: () => {
