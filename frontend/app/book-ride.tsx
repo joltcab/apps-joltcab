@@ -701,13 +701,66 @@ const styles = StyleSheet.create({
   fareLabel: {
     fontSize: 16,
     color: COLORS.textLight,
+    fontWeight: '600',
+  },
+  fareExplanation: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   fareAmount: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.primary,
   },
+  pricingDetailsContainer: {
+    backgroundColor: COLORS.background,
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  pricingDetailsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: 8,
+  },
+  pricingDetailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  pricingDetailLabel: {
+    fontSize: 13,
+    color: COLORS.textLight,
+  },
+  pricingDetailValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
   bookButton: {
     marginTop: 8,
+  },
+  whatsappButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#25D366',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 12,
+  },
+  whatsappButtonDisabled: {
+    backgroundColor: COLORS.border,
+    opacity: 0.5,
+  },
+  whatsappButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
