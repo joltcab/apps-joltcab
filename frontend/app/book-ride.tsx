@@ -83,6 +83,33 @@ export default function BookRideScreen() {
   const calculateFare = async (pickup: any, dropoff: any) => {
     try {
       console.log('📊 Calculating distance and fare...');
+      setLoadingPrice(true);
+      
+      // Intentar calcular precio dinámico con IA si está habilitado
+      if (useDynamicPricing) {
+        try {
+          const { user } = useAuthStore.getState();
+          const dynamicPrice = await aiService.calculateDynamicPrice({
+            pickup_lat: pickup.latitude,
+            pickup_lng: pickup.longitude,
+            dropoff_lat: dropoff.latitude,
+            dropoff_lng: dropoff.longitude,
+            service_type: 'Normal',
+            time: new Date().toISOString(),
+            user_email: user?.email,
+          });
+          
+          console.log('✅ Dynamic pricing:', dynamicPrice);
+          setDynamicPricing(dynamicPrice);
+          setEstimatedFare(dynamicPrice.final_price);
+          setLoadingPrice(false);
+          return;
+        } catch (error) {
+          console.log('⚠️ Dynamic pricing failed, falling back to distance matrix');
+        }
+      }
+      
+      // Fallback: usar distance matrix
       const response = await api.post('/maps/distance-matrix', {
         origins: [`${pickup.latitude},${pickup.longitude}`],
         destinations: [`${dropoff.latitude},${dropoff.longitude}`],
@@ -104,6 +131,7 @@ export default function BookRideScreen() {
           console.log('✅ Fare:', fare.toFixed(2), 'USD');
           
           setEstimatedFare(Math.round(fare * 100) / 100);
+          setDynamicPricing(null);
         }
       }
     } catch (error) {
@@ -123,6 +151,9 @@ export default function BookRideScreen() {
 
       const fare = 5 + distance * 2.5;
       setEstimatedFare(Math.round(fare * 100) / 100);
+      setDynamicPricing(null);
+    } finally {
+      setLoadingPrice(false);
     }
   };
 
