@@ -714,7 +714,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 - [Expo Team](https://expo.dev/) por el excelente framework
 - [Google Maps Platform](https://cloud.google.com/maps-platform)
-- [Emergent IA](https://emergent.sh/) por la integración de IA
+- [OpenAI](https://openai.com/) por GPT-4 y las capacidades de IA
 - [React Native Community](https://reactnative.dev/)
 - Todos los [contribuidores](https://github.com/your-org/joltcab-user-app/graphs/contributors)
 
