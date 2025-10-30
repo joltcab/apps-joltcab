@@ -458,32 +458,61 @@ class AIService {
 
 ## 🔌 Integraciones
 
-### 1. Emergent IA Module
+### 1. OpenAI (Backend Integration)
 
-**Endpoints integrados:**
+**El backend de JoltCab integra OpenAI GPT-4 para:**
+
+- **Chat de Soporte**: Respuestas inteligentes y contextuales
+- **Precio Dinámico**: Análisis de demanda, tráfico, clima para optimizar tarifas
+- **Procesamiento de Lenguaje Natural**: Comprensión de solicitudes del usuario
+
+**Endpoints del backend que usan IA:**
 
 ```typescript
-// Chat con IA
+// Chat con IA (OpenAI GPT-4 en backend)
 POST https://admin.joltcab.com/api/v1/emergentIA/chat/sendMessage
 Body: { message, userId, conversationId }
+Response: { success, response, conversationId, timestamp }
 
-// Historial
+// Historial de conversación
 GET https://admin.joltcab.com/api/v1/emergentIA/chat/getHistory?userId=X
 
-// Precio dinámico
+// Precio dinámico con IA
 POST https://admin.joltcab.com/api/v1/ai/dynamic-pricing-advanced
 Body: { pickup_lat, pickup_lng, dropoff_lat, dropoff_lng, service_type, time }
+Response: { 
+  final_price, base_price, surge_multiplier,
+  factors: { distance_km, duration_min, demand_factor, traffic_factor, weather_factor }
+}
 
 // WhatsApp Booking
 POST https://admin.joltcab.com/api/v1/whatsapp/booking
-Body: { user_phone, pickup_address, dropoff_address, ... }
+Body: { user_phone, pickup_address, dropoff_address, coordinates... }
+Response: { success, booking_id, whatsapp_url }
 ```
 
 **Características:**
-- GPT-4 powered chat
-- Context-aware responses
-- Pricing optimization con ML
-- Análisis de demanda en tiempo real
+- 🤖 GPT-4 powered chat (procesado en backend por seguridad)
+- 🔒 API keys protegidas en servidor
+- 📊 Context-aware responses
+- 💰 Pricing optimization con ML
+- 📈 Análisis de demanda en tiempo real
+
+**Arquitectura:**
+```
+Mobile App → Backend API → OpenAI API
+   ↓            ↓              ↓
+Frontend    FastAPI        GPT-4
+             (Proxy)
+```
+
+**Ventajas de integración via backend:**
+- ✅ API keys seguras (no expuestas en frontend)
+- ✅ Rate limiting controlado
+- ✅ Caching de respuestas frecuentes
+- ✅ Logging y monitoring centralizados
+- ✅ Menor latencia con streaming
+- ✅ Costos optimizados
 
 ### 2. Google Maps Platform
 
