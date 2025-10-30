@@ -295,8 +295,8 @@ STRIPE_SECRET_KEY=sk_test_your_stripe_key
 # Firebase (para notificaciones push)
 FIREBASE_CREDENTIALS=path/to/firebase-credentials.json
 
-# Emergent IA (opcional - si usas tu propia cuenta)
-EMERGENT_IA_URL=https://admin.joltcab.com/api/v1
+# OpenAI (integrado en backend)
+OPENAI_API_KEY=sk-your_openai_key_here
 ```
 
 ### Configuración de Google Maps
