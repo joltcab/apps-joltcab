@@ -283,6 +283,34 @@ export default function BookRideScreen() {
     }
   };
 
+  const handleWhatsAppBooking = async () => {
+    if (!pickupLocation || !dropoffLocation) {
+      Alert.alert('Error', 'Please select pickup and dropoff locations first');
+      return;
+    }
+
+    try {
+      const { user } = useAuthStore.getState();
+      const result = await aiService.createWhatsAppBooking({
+        user_phone: user?.phone || '',
+        pickup_address: pickupAddress,
+        dropoff_address: dropoffAddress,
+        pickup_lat: pickupLocation.latitude,
+        pickup_lng: pickupLocation.longitude,
+        dropoff_lat: dropoffLocation.latitude,
+        dropoff_lng: dropoffLocation.longitude,
+        service_type: 'Normal',
+      });
+
+      if (result.whatsapp_url) {
+        await Linking.openURL(result.whatsapp_url);
+      }
+    } catch (error: any) {
+      Alert.alert('Error', 'Could not create WhatsApp booking');
+      console.error('WhatsApp booking error:', error);
+    }
+  };
+
   const renderMap = () => {
     if (Platform.OS !== 'web') {
       return (
