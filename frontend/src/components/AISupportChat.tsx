@@ -64,14 +64,10 @@ export const AISupportChat: React.FC<AISupportChatProps> = ({ visible, onClose }
     setLoading(true);
 
     try {
-      const response = await aiService.chatWithSupport({
+      const response = await aiService.sendMessage({
         message: userMessage.content,
-        user_email: user?.email,
-        role: 'user',
-        conversation_history: messages.map((msg) => ({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content,
-        })),
+        userId: user?.email || user?.user_id,
+        conversationId: messages.length > 1 ? 'conv-' + user?.user_id : undefined,
       });
 
       const aiMessage: Message = {
